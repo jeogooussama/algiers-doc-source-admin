@@ -1,20 +1,57 @@
-import { Container, Paper, TextField, Button, Stack, IconButton, Select, MenuItem } from "@mui/material";
+import { useState } from "react";
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Stack,
+  IconButton,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import LanguageIcon from "@mui/icons-material/Language";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
-const Filter = () => {
-  const types = [
-    { value: "option1", label: "الخيار 1", icon: "🔍" },
-    { value: "option2", label: "الخيار 2", icon: "📁" },
-    { value: "option3", label: "الخيار 3", icon: "📅" },
+// ... (your imports)
+
+const Filter = ({ onFilterChange }) => {
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState("");
+  const [language, setLanguage] = useState("");
+
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+    onFilterChange("search", event.target.value);
+  };
+
+  const handleTypeChange = (event) => {
+    setType(event.target.value);
+    onFilterChange("type", event.target.value);
+  };
+
+  const handleLanguageChange = (event) => {
+    setLanguage(event.target.value);
+    onFilterChange("language", event.target.value);
+  };
+
+  const handleReset = () => {
+    setSearch("");
+    setType("");
+    setLanguage("");
+    onFilterChange("reset");
+  };
+
+  const typeOptions = [
+    { value: "interfaces", label: "الواجهات" },
+    { value: "LinedPapers", label: "الورق المخطط" },
   ];
 
-  const languages = [
-    { value: "arabic", label: "العربية", icon: "🇦🇪" },
-    { value: "french", label: "الفرنسية", icon: "🇫🇷" },
-    { value: "english", label: "الإنجليزية", icon: "🇬🇧" },
+  const languageOptions = [
+    { value: "arabic", label: "العربية" },
+    { value: "french", label: "الفرنسية" },
+    { value: "english", label: "الإنجليزية" },
   ];
 
   return (
@@ -33,6 +70,8 @@ const Filter = () => {
           label="البحث"
           variant="outlined"
           placeholder="ابحث هنا"
+          value={search}
+          onChange={handleSearchChange}
           InputProps={{
             startAdornment: (
               <IconButton color="primary" aria-label="search">
@@ -41,18 +80,23 @@ const Filter = () => {
             ),
           }}
         />
-        <Stack direction={{ xs: "column", sm: "column", md: "row" }} spacing={2}>
+        <Stack
+          direction={{ xs: "column", sm: "column", md: "row" }}
+          spacing={2}
+        >
           <Select
             label="تصفية حسب النوع"
             variant="outlined"
             style={{ minWidth: 120, flexGrow: 1 }}
+            value={type}
+            onChange={handleTypeChange}
             startAdornment={
               <IconButton color="primary">
                 <FilterListIcon />
               </IconButton>
             }
           >
-            {types.map((option) => (
+            {typeOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
@@ -62,13 +106,15 @@ const Filter = () => {
             label="تصفية حسب اللغة"
             variant="outlined"
             style={{ minWidth: 120, flexGrow: 1 }}
+            value={language}
+            onChange={handleLanguageChange}
             startAdornment={
               <IconButton color="primary">
                 <LanguageIcon />
               </IconButton>
             }
           >
-            {languages.map((option) => (
+            {languageOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
@@ -80,6 +126,7 @@ const Filter = () => {
           color="warning"
           startIcon={<RefreshIcon />}
           sx={{ width: "100%", maxWidth: 200 }}
+          onClick={handleReset}
         >
           إعادة تعيين
         </Button>
@@ -87,5 +134,4 @@ const Filter = () => {
     </Container>
   );
 };
-
 export default Filter;

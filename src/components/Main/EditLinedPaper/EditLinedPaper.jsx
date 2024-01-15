@@ -21,7 +21,7 @@ const EditLinedPaper = ({ data }) => {
     // ...
 
     // Redirect to the main page after editing the file
-    history.push("/");
+    history("/");
   };
 
   return (

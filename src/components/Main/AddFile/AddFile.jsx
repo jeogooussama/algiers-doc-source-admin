@@ -1,62 +1,106 @@
-import { useState } from 'react';
-import { Container, Paper, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import {
+  Container,
+  Paper,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddFile = () => {
-  const history = useNavigate();
-  const [fileType, setFileType] = useState('interface');
+  const navigate = useNavigate();
+  const [fileType, setFileType] = useState("interface");
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    university: '',
-    language: '',
-    downloadLinks: {
-      word: '',
-      pdf: '',
+    interface: {
+      title: "",
+      description: "",
+      university: "",
+      language: "",
+      downloadLinks: {
+        word: "",
+        pdf: "",
+      },
+      image: "",
     },
-    image: '',
+    linedPaper: {
+      title: "",
+      description: "",
+      downloadLinks: {
+        word: "",
+        pdf: "",
+      },
+      image: "",
+    },
   });
 
   const handleTypeChange = (event) => {
     setFileType(event.target.value);
     setFormData({
-      title: '',
-      description: '',
-      university: '',
-      language: '',
-      downloadLinks: {
-        word: '',
-        pdf: '',
+      interface: {
+        title: "",
+        description: "",
+        university: "",
+        language: "",
+        downloadLinks: {
+          word: "",
+          pdf: "",
+        },
+        image: "",
       },
-      image: '',
+      linedPaper: {
+        title: "",
+        description: "",
+        downloadLinks: {
+          word: "",
+          pdf: "",
+        },
+        image: "",
+      },
     });
   };
 
   const handleSubmit = async () => {
     // Simple validation check
     if (
-      (fileType === 'interface' &&
-        (!formData.title ||
-          !formData.description ||
-          !formData.university ||
-          !formData.language ||
-          !formData.downloadLinks.word)) ||
-      (fileType === 'linedPaper' &&
-        (!formData.title ||
-          !formData.description ||
-          !formData.university ||
-          !formData.downloadLinks.word))
+      (fileType === "interface" &&
+        (!formData.interface.title ||
+          !formData.interface.description ||
+          !formData.interface.university ||
+          !formData.interface.language ||
+          !formData.interface.downloadLinks.word)) ||
+      (fileType === "linedPaper" &&
+        (!formData.linedPaper.title ||
+          !formData.linedPaper.description ||
+          !formData.linedPaper.downloadLinks.word))
     ) {
       // If required fields are not filled, don't submit
-      alert('من فضلك تاكد من ملء جميع الفراغات');
+      alert("من فضلك تأكد من ملء جميع الفراغات");
       return;
     }
 
-    // Implement your logic to save the data to the server based on fileType
-    // ...
+    try {
+      const endpoint = fileType === "interface" ? "interfaces" : "linedPapers"; // Updated endpoint
+      const response = await axios.post(
+        `http://localhost:3001/${endpoint}/create`,
+        {
+          ...formData[fileType], // Send the data for the selected fileType
+        }
+      );
 
-    // Redirect to the main page after adding the file
-    history.push('/');
+      // Handle successful response, e.g., show success message, redirect, etc.
+      console.log("File added successfully:", response.data);
+
+      // Redirect to the main page after adding the file
+      navigate("/");
+    } catch (error) {
+      console.error("Error adding file:", error);
+      // Handle the error (e.g., show error message)
+    }
   };
 
   return (
@@ -83,8 +127,20 @@ const AddFile = () => {
             variant="outlined"
             fullWidth
             sx={{ mb: 2 }}
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            value={
+              fileType === "interface"
+                ? formData.interface.title
+                : formData.linedPaper.title
+            }
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                [fileType]: {
+                  ...formData[fileType],
+                  title: e.target.value,
+                },
+              })
+            }
             required
           />
           <TextField
@@ -94,20 +150,40 @@ const AddFile = () => {
             rows={4}
             fullWidth
             sx={{ mb: 2 }}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            value={
+              fileType === "interface"
+                ? formData.interface.description
+                : formData.linedPaper.description
+            }
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                [fileType]: {
+                  ...formData[fileType],
+                  description: e.target.value,
+                },
+              })
+            }
             required
           />
 
-          {fileType === 'interface' && (
+          {fileType === "interface" && (
             <>
               <TextField
                 label="الجامعة"
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.university}
-                onChange={(e) => setFormData({ ...formData, university: e.target.value })}
+                value={formData.interface.university}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    interface: {
+                      ...formData.interface,
+                      university: e.target.value,
+                    },
+                  })
+                }
                 required
               />
               <FormControl variant="outlined" fullWidth sx={{ mb: 2 }}>
@@ -115,9 +191,17 @@ const AddFile = () => {
                 <Select
                   labelId="language-label"
                   id="language"
-                  value={formData.language}
+                  value={formData.interface.language}
                   label="اللغة"
-                  onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      interface: {
+                        ...formData.interface,
+                        language: e.target.value,
+                      },
+                    })
+                  }
                   required
                 >
                   <MenuItem value="arabic">العربية</MenuItem>
@@ -130,9 +214,18 @@ const AddFile = () => {
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.downloadLinks.word}
+                value={formData.linedPaper.downloadLinks.word}
                 onChange={(e) =>
-                  setFormData({ ...formData, downloadLinks: { ...formData.downloadLinks, word: e.target.value } })
+                  setFormData({
+                    ...formData,
+                    linedPaper: {
+                      ...formData.linedPaper,
+                      downloadLinks: {
+                        ...formData.linedPaper.downloadLinks,
+                        word: e.target.value,
+                      },
+                    },
+                  })
                 }
                 required
               />
@@ -141,9 +234,18 @@ const AddFile = () => {
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.downloadLinks.pdf}
+                value={formData.linedPaper.downloadLinks.pdf}
                 onChange={(e) =>
-                  setFormData({ ...formData, downloadLinks: { ...formData.downloadLinks, pdf: e.target.value } })
+                  setFormData({
+                    ...formData,
+                    linedPaper: {
+                      ...formData.linedPaper,
+                      downloadLinks: {
+                        ...formData.linedPaper.downloadLinks,
+                        pdf: e.target.value,
+                      },
+                    },
+                  })
                 }
               />
               <TextField
@@ -151,31 +253,39 @@ const AddFile = () => {
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                value={formData.interface.image}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    interface: {
+                      ...formData.interface,
+                      image: e.target.value,
+                    },
+                  })
+                }
               />
             </>
           )}
 
-          {fileType === 'linedPaper' && (
+          {fileType === "linedPaper" && (
             <>
-              <TextField
-                label="الفئة"
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={formData.university}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                required
-              />
               <TextField
                 label="رابط Word"
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.downloadLinks.word}
+                value={formData.linedPaper.downloadLinks.word}
                 onChange={(e) =>
-                  setFormData({ ...formData, downloadLinks: { ...formData.downloadLinks, word: e.target.value } })
+                  setFormData({
+                    ...formData,
+                    linedPaper: {
+                      ...formData.linedPaper,
+                      downloadLinks: {
+                        ...formData.linedPaper.downloadLinks,
+                        word: e.target.value,
+                      },
+                    },
+                  })
                 }
                 required
               />
@@ -184,23 +294,46 @@ const AddFile = () => {
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.downloadLinks.pdf}
+                value={formData.linedPaper.downloadLinks.pdf}
                 onChange={(e) =>
-                  setFormData({ ...formData, downloadLinks: { ...formData.downloadLinks, pdf: e.target.value } })
+                  setFormData({
+                    ...formData,
+                    linedPaper: {
+                      ...formData.linedPaper,
+                      downloadLinks: {
+                        ...formData.linedPaper.downloadLinks,
+                        pdf: e.target.value,
+                      },
+                    },
+                  })
                 }
+                required
               />
               <TextField
                 label="رابط الصورة"
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                value={formData.linedPaper.image}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    linedPaper: {
+                      ...formData.linedPaper,
+                      image: e.target.value,
+                    },
+                  })
+                }
               />
             </>
           )}
 
-          <Button variant="contained" color="success" type="button" onClick={handleSubmit}>
+          <Button
+            variant="contained"
+            color="success"
+            type="button"
+            onClick={handleSubmit}
+          >
             إضافة الملف
           </Button>
         </form>
