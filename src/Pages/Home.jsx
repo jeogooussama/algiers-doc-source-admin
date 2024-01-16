@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import { FileCard, Filter, Navbar } from '../components';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { FileCard, Filter, Navbar } from "../components";
+import axios from "axios";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -9,9 +9,9 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [filterValues, setFilterValues] = useState({
-    search: '',
-    type: '',
-    language: '',
+    search: "",
+    type: "",
+    language: "",
   });
 
   const fetchData = async () => {
@@ -19,22 +19,29 @@ const Home = () => {
       setLoading(true);
       setError(false);
 
-      // Fetch interfaces
-      const interfacesResponse = await axios.get('http://localhost:3001/interfaces/get-all');
+      const interfacesResponse = await axios.get(
+        "http://localhost:3001/interfaces/"
+      );
       const interfacesData = interfacesResponse.data;
 
-      // Fetch lined papers
-      const linedPapersResponse = await axios.get('http://localhost:3001/linedPapers/get-all');
+      const linedPapersResponse = await axios.get(
+        "http://localhost:3001/linedPapers/"
+      );
       const linedPapersData = linedPapersResponse.data;
 
-      // Combine interfaces and lined papers into a single array
       const combinedData = [...interfacesData, ...linedPapersData];
 
       setData(combinedData);
       setFilteredData(combinedData);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setError(true);
+      console.error("Error fetching data:", error);
+
+      // Check for network errors
+      if (axios.isAxiosError(error) && !error.response) {
+        setError("Network error. Please check your internet connection.");
+      } else {
+        setError("Error loading files.");
+      }
     } finally {
       setLoading(false);
     }
@@ -46,11 +53,6 @@ const Home = () => {
 
   const handleFilterChange = (filterType, value) => {
     setFilterValues((prevValues) => ({ ...prevValues, [filterType]: value }));
-
-    // Reset filters
-    if (filterType === 'reset') {
-      setFilterValues({ search: '', type: '', language: '' });
-    }
   };
 
   useEffect(() => {
@@ -60,19 +62,23 @@ const Home = () => {
       // Apply search filter
       if (filterValues.search) {
         const searchKeyword = filterValues.search.toLowerCase();
-        filteredResult = filteredResult.filter(
-          (item) => item.title.toLowerCase().includes(searchKeyword)
+        filteredResult = filteredResult.filter((item) =>
+          item.title.toLowerCase().includes(searchKeyword)
         );
       }
 
       // Apply type filter
       if (filterValues.type) {
-        filteredResult = filteredResult.filter((item) => item.type === filterValues.type);
+        filteredResult = filteredResult.filter(
+          (item) => item.type === filterValues.type
+        );
       }
 
       // Apply language filter
       if (filterValues.language) {
-        filteredResult = filteredResult.filter((item) => item.language === filterValues.language);
+        filteredResult = filteredResult.filter(
+          (item) => item.language === filterValues.language
+        );
       }
 
       setFilteredData(filteredResult);
@@ -103,7 +109,12 @@ const Home = () => {
       ) : filteredData?.length === 0 ? (
         <Typography variant="h6">No files found</Typography>
       ) : (
-        <FileCard data={filteredData} loading={loading} error={error} onRefresh={handleRefresh} />
+        <FileCard
+          data={filteredData}
+          loading={loading}
+          error={error}
+          onRefresh={handleRefresh}
+        />
       )}
     </Box>
   );

@@ -65,48 +65,27 @@ const AddFile = () => {
   };
 
   const handleSubmit = async () => {
-    // Simple validation check
-    if (
-      (fileType === "interface" &&
-        (!formData.interface.title ||
-          !formData.interface.description ||
-          !formData.interface.university ||
-          !formData.interface.language ||
-          !formData.interface.downloadLinks.word)) ||
-      (fileType === "linedPaper" &&
-        (!formData.linedPaper.title ||
-          !formData.linedPaper.description ||
-          !formData.linedPaper.downloadLinks.word))
-    ) {
-      // If required fields are not filled, don't submit
-      alert("من فضلك تأكد من ملء جميع الفراغات");
-      return;
-    }
 
     try {
-      const endpoint = fileType === "interface" ? "interfaces" : "linedPapers"; // Updated endpoint
+      const endpoint = fileType === "interface" ? "interfaces" : "linedPapers";
       const response = await axios.post(
-        `http://localhost:3001/${endpoint}/create`,
+        `http://localhost:3001/${endpoint}/`,
         {
-          ...formData[fileType], // Send the data for the selected fileType
+          ...formData[fileType],
         }
       );
 
-      // Handle successful response, e.g., show success message, redirect, etc.
       console.log("File added successfully:", response.data);
-
-      // Redirect to the main page after adding the file
       navigate("/");
     } catch (error) {
       console.error("Error adding file:", error);
-      // Handle the error (e.g., show error message)
     }
   };
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
-        <form>
+        <form action="./" method="post">
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel id="file-type-label">نوع الملف</InputLabel>
             <Select
@@ -121,17 +100,12 @@ const AddFile = () => {
             </Select>
           </FormControl>
 
-          {/* Form fields based on fileType */}
           <TextField
             label="العنوان"
             variant="outlined"
             fullWidth
             sx={{ mb: 2 }}
-            value={
-              fileType === "interface"
-                ? formData.interface.title
-                : formData.linedPaper.title
-            }
+            value={formData[fileType].title}
             onChange={(e) =>
               setFormData({
                 ...formData,
@@ -143,6 +117,7 @@ const AddFile = () => {
             }
             required
           />
+
           <TextField
             label="الوصف"
             variant="outlined"
@@ -150,11 +125,7 @@ const AddFile = () => {
             rows={4}
             fullWidth
             sx={{ mb: 2 }}
-            value={
-              fileType === "interface"
-                ? formData.interface.description
-                : formData.linedPaper.description
-            }
+            value={formData[fileType].description}
             onChange={(e) =>
               setFormData({
                 ...formData,
@@ -214,14 +185,14 @@ const AddFile = () => {
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.linedPaper.downloadLinks.word}
+                value={formData.interface.downloadLinks.word}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    linedPaper: {
-                      ...formData.linedPaper,
+                    interface: {
+                      ...formData.interface,
                       downloadLinks: {
-                        ...formData.linedPaper.downloadLinks,
+                        ...formData.interface.downloadLinks,
                         word: e.target.value,
                       },
                     },
@@ -234,14 +205,14 @@ const AddFile = () => {
                 variant="outlined"
                 fullWidth
                 sx={{ mb: 2 }}
-                value={formData.linedPaper.downloadLinks.pdf}
+                value={formData.interface.downloadLinks.pdf}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    linedPaper: {
-                      ...formData.linedPaper,
+                    interface: {
+                      ...formData.interface,
                       downloadLinks: {
-                        ...formData.linedPaper.downloadLinks,
+                        ...formData.interface.downloadLinks,
                         pdf: e.target.value,
                       },
                     },

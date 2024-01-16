@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
 import Add from "./Pages/Add";
- import Edit from "./Pages/Edite";
+import InterfaceEdit from "./Pages/InterfaceEdit";
+import LinedPaperEdit from "./Pages/LinedPaperEdit";
 
 const App = () => {
   return (
@@ -9,7 +10,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/add" element={<Add />} />
-     <Route path="/edit/:id" element={<Edit />} />
+        <Route path="/edit/interface/:id" element={<InterfaceEdit />} />
+        <Route path="/edit/linedpaper/:id" element={<LinedPaperEdit />} />
       </Routes>
     </Router>
   );
