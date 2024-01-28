@@ -14,8 +14,6 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import LanguageIcon from "@mui/icons-material/Language";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
-// ... (your imports)
-
 const Filter = ({ onFilterChange }) => {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
@@ -38,17 +36,19 @@ const Filter = ({ onFilterChange }) => {
 
   const handleReset = () => {
     setSearch("");
-    setType("");
-    setLanguage("");
+    setType(""); // Reset type to empty string
+    setLanguage(""); // Reset language to empty string
     onFilterChange("reset");
   };
 
   const typeOptions = [
+    { value: "", label: "الكل" }, // Default option for "all"
     { value: "interfaces", label: "الواجهات" },
     { value: "LinedPapers", label: "الورق المخطط" },
   ];
 
   const languageOptions = [
+    { value: "", label: "الكل" }, // Default option for "all"
     { value: "arabic", label: "العربية" },
     { value: "french", label: "الفرنسية" },
     { value: "english", label: "الإنجليزية" },
@@ -134,4 +134,5 @@ const Filter = ({ onFilterChange }) => {
     </Container>
   );
 };
+
 export default Filter;

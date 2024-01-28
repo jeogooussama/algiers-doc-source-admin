@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
@@ -10,15 +10,22 @@ import {
   DialogActions,
   Snackbar,
   Alert,
+  Autocomplete,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import axios from "axios";
+import uniList from "../components/Main/AddFile/unList";
 
 const InterfaceEdit = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    university: "",
+    city: "", // New field for city
+    university: "", // Only university, without city
     language: "",
     downloadLinks: {
       word: "",
@@ -36,7 +43,9 @@ const InterfaceEdit = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/interfaces/${id}`);
+        const response = await axios.get(
+          `http://localhost:3001/interfaces/${id}`
+        );
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,7 +54,16 @@ const InterfaceEdit = () => {
 
     fetchData();
   }, [id]);
-
+  useEffect(() => {
+    // If the city is selected and universities exist for that city
+    if (formData.city && uniList.some((uni) => uni.city === formData.city)) {
+      // Set university to the first university in the list
+      const firstUniversity =
+        uniList.find((uni) => uni.city === formData.city)?.universities[0] ||
+        "";
+      setFormData((prevData) => ({ ...prevData, university: firstUniversity }));
+    }
+  }, [formData.city]);
   const handleSubmit = async () => {
     try {
       const url = `http://localhost:3001/interfaces/${id}`;
@@ -70,7 +88,7 @@ const InterfaceEdit = () => {
       setConfirmationDialogOpen(false);
       setSnackbarMessage("Deletion successful");
       setSnackbarOpen(true);
-      navigate("/")
+      navigate("/");
     } catch (error) {
       console.error("Error deleting data:", error);
       setSnackbarMessage("Error deleting");
@@ -109,32 +127,73 @@ const InterfaceEdit = () => {
         fullWidth
         sx={{ mb: 2 }}
         value={formData.description}
-        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
         required
+      />
+
+      {/* City Select Option */}
+      <FormControl variant="outlined" fullWidth sx={{ mb: 2 }}>
+        <InputLabel id="city-label">المدينة</InputLabel>
+        <Select
+          labelId="city-label"
+          id="city"
+          value={formData?.city || ""}
+          label="المدينة"
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              city: e.target.value,
+            })
+          }
+        >
+          {uniList.map((uni, index) => (
+            <MenuItem key={index} value={uni.city}>
+              {index + 1}-{uni.city}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {/* University Autocomplete */}
+      <Autocomplete
+        options={
+          formData.city
+            ? uniList.find((uni) => uni.city === formData.city)?.universities ||
+              []
+            : []
+        }
+        getOptionLabel={(option) => option}
+        value={formData.university}
+        onChange={(_, newValue) =>
+          setFormData({ ...formData, university: newValue })
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="الجامعة"
+            variant="outlined"
+            fullWidth
+            required
+          />
+        )}
+        sx={{ mb: 2 }}
       />
 
       {/* Form fields specific to Interface */}
       {formData.type === "interface" && (
-        <>
-          <TextField
-            label="University"
-            variant="outlined"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={formData.university}
-            onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-            required
-          />
-          <TextField
-            label="Interface Language"
-            variant="outlined"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={formData.language}
-            onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-            required
-          />
-        </>
+        <TextField
+          label="Interface Language"
+          variant="outlined"
+          fullWidth
+          sx={{ mb: 2 }}
+          value={formData.language}
+          onChange={(e) =>
+            setFormData({ ...formData, language: e.target.value })
+          }
+          required
+        />
       )}
 
       {/* Common Form fields */}
@@ -144,10 +203,12 @@ const InterfaceEdit = () => {
         fullWidth
         sx={{ mb: 2 }}
         value={formData.downloadLinks.word}
-        onChange={(e) => setFormData({
-          ...formData,
-          downloadLinks: { ...formData.downloadLinks, word: e.target.value },
-        })}
+        onChange={(e) =>
+          setFormData({
+            ...formData,
+            downloadLinks: { ...formData.downloadLinks, word: e.target.value },
+          })
+        }
         required
       />
       <TextField
@@ -156,10 +217,12 @@ const InterfaceEdit = () => {
         fullWidth
         sx={{ mb: 2 }}
         value={formData.downloadLinks.pdf}
-        onChange={(e) => setFormData({
-          ...formData,
-          downloadLinks: { ...formData.downloadLinks, pdf: e.target.value },
-        })}
+        onChange={(e) =>
+          setFormData({
+            ...formData,
+            downloadLinks: { ...formData.downloadLinks, pdf: e.target.value },
+          })
+        }
       />
       <TextField
         label="Image Link"
@@ -215,7 +278,9 @@ const InterfaceEdit = () => {
       >
         <Alert
           onClose={handleSnackbarClose}
-          severity={snackbarMessage.includes("successful") ? "success" : "error"}
+          severity={
+            snackbarMessage.includes("successful") ? "success" : "error"
+          }
           sx={{ width: "100%" }}
         >
           {snackbarMessage}

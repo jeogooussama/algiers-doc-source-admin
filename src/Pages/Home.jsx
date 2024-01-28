@@ -69,9 +69,15 @@ const Home = () => {
 
       // Apply type filter
       if (filterValues.type) {
-        filteredResult = filteredResult.filter(
-          (item) => item.type === filterValues.type
-        );
+        if (filterValues.type === "interfaces") {
+          filteredResult = filteredResult.filter(
+            (item) => item.type === "interface"
+          );
+        } else if (filterValues.type === "LinedPapers") {
+          filteredResult = filteredResult.filter(
+            (item) => item.type === "linedpaper"
+          );
+        }
       }
 
       // Apply language filter
