@@ -55,7 +55,7 @@ const Filter = ({ onFilterChange }) => {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <Container maxWidth="xl" sx={{ mt: 4 }}>
       <Paper
         elevation={3}
         sx={{

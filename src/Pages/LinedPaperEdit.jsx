@@ -33,7 +33,7 @@ const LinedPaperEdit = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/linedPapers/${id}`);
+        const response = await axios.get(`https://algiridocsapi.onrender.com/linedPapers/${id}`);
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,7 +45,7 @@ const LinedPaperEdit = () => {
 
   const handleSubmit = async () => {
     try {
-      const url = `http://localhost:3001/linedPapers/${id}`;
+      const url = `https://algiridocsapi.onrender.com/linedPapers/${id}`;
       await axios.put(url, formData);
       setSnackbarMessage("Edit successful");
       setSnackbarOpen(true);
@@ -62,7 +62,7 @@ const LinedPaperEdit = () => {
 
   const confirmDelete = async () => {
     try {
-      const url = `http://localhost:3001/linedPapers/${id}`;
+      const url = `https://algiridocsapi.onrender.com/linedPapers/${id}`;
       await axios.delete(url);
       setConfirmationDialogOpen(false);
       setSnackbarMessage("Deletion successful");

@@ -19,7 +19,11 @@ const FileCard = ({ data, loading, error, onRefresh }) => {
       {loading ? (
         <Typography variant="h6">Loading...</Typography>
       ) : error ? (
-        <Box sx={{ my: 2 }}>
+        <Box
+          sx={{
+            m: 4,
+          }}
+        >
           <Typography variant="h6" color="error" sx={{ mb: 2 }}>
             Error loading files. Please try again.
           </Typography>

@@ -20,12 +20,12 @@ const Home = () => {
       setError(false);
 
       const interfacesResponse = await axios.get(
-        "http://localhost:3001/interfaces/"
+        "https://algiridocsapi.onrender.com/interfaces/"
       );
       const interfacesData = interfacesResponse.data;
 
       const linedPapersResponse = await axios.get(
-        "http://localhost:3001/linedPapers/"
+        "https://algiridocsapi.onrender.com/linedPapers/"
       );
       const linedPapersData = linedPapersResponse.data;
 
@@ -102,9 +102,9 @@ const Home = () => {
       <Navbar />
       <Filter onFilterChange={handleFilterChange} />
       {loading ? (
-        <Typography variant="h6">Loading...</Typography>
+        <Typography sx={{m:4, textAlign:"center"}} variant="h6">Loading...</Typography>
       ) : error ? (
-        <Box>
+        <Box sx={{m:4, justifyContent:"center",alignItems:"center" ,display:"flex" ,flexDirection:"column"}}>
           <Typography variant="h6" color="error">
             Error loading files.
           </Typography>
