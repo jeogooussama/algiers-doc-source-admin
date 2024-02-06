@@ -69,7 +69,7 @@ const AddFile = () => {
   const handleSubmit = async () => {
     try {
       const endpoint = fileType === "interface" ? "interfaces" : "linedPapers";
-      const response = await axios.post(`http://localhost:3001/${endpoint}/`, {
+      const response = await axios.post(`https://algiridocsapi.onrender.com/${endpoint}/`, {
         ...formData[fileType],
       });
 
