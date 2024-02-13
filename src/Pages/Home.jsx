@@ -20,12 +20,12 @@ const Home = () => {
       setError(false);
 
       const interfacesResponse = await axios.get(
-        "https://algiridocsapi.onrender.com/interfaces/"
+        "https://algeridoc.adaptable.app/interfaces/"
       );
       const interfacesData = interfacesResponse.data;
 
       const linedPapersResponse = await axios.get(
-        "https://algiridocsapi.onrender.com/linedPapers/"
+        "https://algeridoc.adaptable.app/linedPapers/"
       );
       const linedPapersData = linedPapersResponse.data;
 

@@ -44,7 +44,7 @@ const InterfaceEdit = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://algiridocsapi.onrender.com/interfaces/${id}`
+          `https://algeridoc.adaptable.app/interfaces/${id}`
         );
         setFormData(response.data);
       } catch (error) {
@@ -66,7 +66,7 @@ const InterfaceEdit = () => {
   }, [formData.city]);
   const handleSubmit = async () => {
     try {
-      const url = `https://algiridocsapi.onrender.com/interfaces/${id}`;
+      const url = `https://algeridoc.adaptable.app/interfaces/${id}`;
       await axios.put(url, formData);
       setSnackbarMessage("Edit successful");
       setSnackbarOpen(true);
@@ -83,7 +83,7 @@ const InterfaceEdit = () => {
 
   const confirmDelete = async () => {
     try {
-      const url = `https://algiridocsapi.onrender.com/interfaces/${id}`;
+      const url = `https://algeridoc.adaptable.app/interfaces/${id}`;
       await axios.delete(url);
       setConfirmationDialogOpen(false);
       setSnackbarMessage("Deletion successful");
