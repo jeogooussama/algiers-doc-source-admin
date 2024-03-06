@@ -10,11 +10,11 @@ import {
   DialogActions,
   Snackbar,
   Alert,
-  Autocomplete,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Autocomplete,
 } from "@mui/material";
 import axios from "axios";
 import uniList from "../components/Main/AddFile/unList";
@@ -92,20 +92,28 @@ const InterfaceEdit = () => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
-      {["title", "description"].map((field) => (
-        <TextField
-          key={field}
-          label={field.charAt(0).toUpperCase() + field.slice(1)}
-          variant="outlined"
-          fullWidth
-          sx={{ mb: 2 }}
-          value={formData[field]}
-          onChange={(e) =>
-            setFormData({ ...formData, [field]: e.target.value })
-          }
-          required
-        />
-      ))}
+      <TextField
+        label="Title"
+        variant="outlined"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={formData.title}
+        onChange={(e) =>
+          setFormData({ ...formData, title: e.target.value })
+        }
+        required
+      />
+      <TextField
+        label="Description"
+        variant="outlined"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={formData.description}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
+        required
+      />
 
       <Autocomplete
         options={uniList.map((uni) => uni.city)}
@@ -120,6 +128,18 @@ const InterfaceEdit = () => {
         )}
         value={formData.city}
         onChange={(_, newValue) => handleCityChange(newValue)}
+      />
+
+      <TextField
+        label="University"
+        variant="outlined"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={formData.university}
+        onChange={(e) =>
+          setFormData({ ...formData, university: e.target.value })
+        }
+        autoComplete="off"
       />
 
       <FormControl variant="outlined" fullWidth sx={{ mb: 2 }}>

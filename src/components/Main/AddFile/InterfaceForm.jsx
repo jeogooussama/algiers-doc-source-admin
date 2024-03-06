@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  Autocomplete,
   FormControl,
   InputLabel,
   MenuItem,
@@ -10,27 +9,13 @@ import {
 import uniList from "./unList";
 
 const InterfaceForm = ({ formData, setFormData }) => {
-  const [selectedUniversity, setSelectedUniversity] = useState("");
-  const [universitiesInSelectedCity, setUniversitiesInSelectedCity] = useState([]);
+  const [cities, setCities] = useState([]);
 
   useEffect(() => {
-    // Set universities in the selected city when the city changes
-    const universitiesForCity =
-      formData.interface.city &&
-      uniList.find((uni) => uni.city === formData.interface.city)?.universities;
-    setUniversitiesInSelectedCity(universitiesForCity || []);
-
-    // If there are universities in the selected city, set the first one
-    if (universitiesForCity && universitiesForCity.length > 0) {
-      setFormData({
-        ...formData,
-        interface: {
-          ...formData.interface,
-          university: universitiesForCity[0],
-        },
-      });
-    }
-  }, [formData.interface.city]);
+    // Extract distinct city names from uniList
+    const distinctCities = [...new Set(uniList.map((uni) => uni.city))];
+    setCities(distinctCities);
+  }, []);
 
   return (
     <>
@@ -46,44 +31,37 @@ const InterfaceForm = ({ formData, setFormData }) => {
             setFormData({
               ...formData,
               interface: {
-                ...formData?.interface,
+                ...formData.interface,
                 city: e.target.value,
               },
             })
           }
         >
-          {uniList.map((uni, index) => (
-            <MenuItem key={index} value={uni.city}>
-              {index + 1}- {uni.city}
+          {cities.map((city, index) => (
+            <MenuItem key={index} value={city}>
+              {index+1}-{city}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
 
-      {/* University Autocomplete */}
-      <Autocomplete
-        options={universitiesInSelectedCity}
-        getOptionLabel={(option) => option}
-        value={formData.interface.university || null}
-        onChange={(_, newValue) =>
+      {/* University Text Field */}
+      <TextField
+        label="الجامعة"
+        variant="outlined"
+        fullWidth
+        value={formData.interface.university || ""}
+        onChange={(e) =>
           setFormData({
             ...formData,
             interface: {
               ...formData.interface,
-              university: newValue || "",
+              university: e.target.value,
             },
           })
         }
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="الجامعة"
-            variant="outlined"
-            fullWidth
-            required
-          />
-        )}
         sx={{ mb: 2 }}
+        autoComplete="off"
       />
 
       {/* Other form fields */}
